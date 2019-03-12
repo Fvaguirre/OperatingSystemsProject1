@@ -18,7 +18,8 @@ typedef struct {
   int* io_burst_times;
 } process;
 
-double verifyRandomNum(int curr_rand, int upper_bound);
-process* initProcesses(int num_processes, int upper_bound, int seed);
+double verifyRandomNum(int curr_rand, int upper_bound, double lambda);
+double exponentialAvgFunc(int curr_rand, double lambda)
+process* initProcesses(int num_processes, int upper_bound, int seed, double lambda);
 
 #endif

@@ -33,7 +33,7 @@ int main(int argc, char** argv){
   rr_time_slice = atoi(argv[7]);
   rr_queue_type = argv[8];
 
-  process* processes = initProcesses(num_processes, upper_bound, seed);
+  process* processes = initProcesses(num_processes, upper_bound, seed, lambda);
   for (int i = 0; i < num_processes; i++){
     printf("PROC %d: has %d num_bursts\n",processes[i].pid, processes[i].num_bursts);
   }
