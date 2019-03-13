@@ -50,6 +50,6 @@ int isEmpty(Node** head);
 double verifyRandomNum(double curr_rand, int upper_bound, double lambda);
 double exponentialAvgFunc(double curr_rand, double lambda);
 process* initProcesses(int num_processes, int upper_bound, int seed, double lambda);
-scheduler* initScheduler(process* processes, int num_processes);
+scheduler* initScheduler(char* algorithm, process* processes, int num_processes);
 
 #endif
