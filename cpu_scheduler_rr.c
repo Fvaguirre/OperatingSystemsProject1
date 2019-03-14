@@ -21,7 +21,11 @@ scheduler* runRoundRobin(process* processes, int num_processes, char* rr_queue_t
   // else{
   //
   // }
-  scheduler* proc_scheduler = initScheduler("RR", processes, num_processes);
+  scheduler* proc_scheduler = initScheduler(processes, num_processes);
+  //Here is where we run the actual algorithm
+  while (!isEmpty(&proc_scheduler->processes)){
+
+  }
 
   return proc_scheduler;
 }

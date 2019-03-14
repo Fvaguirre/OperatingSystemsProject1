@@ -65,37 +65,20 @@ process* initProcesses(int num_processes, int upper_bound, int seed, double lamb
   return procs;
 }
 
-scheduler* initScheduler(char* algorithm, process* processes, int num_processes){
+scheduler* initScheduler(process* processes, int num_processes){
   int i;
   double priority_metric;
   scheduler* proc_scheduler = (scheduler*)calloc(sizeof(scheduler), 1);
 
   if (num_processes > 1){
     for (i = 0; i < num_processes; i++){
-      // //HERE is where you fill in the way the priority queue will be ordered
-      if (strcmp(algorithm, "RR") == 0){
-        //Special case cannot divide by pid == 0
-        if (i == 0){
-          priority_metric = processes[i].arrival_time - 1.0/.9;
-        }
-        else{
-          priority_metric =  processes[i].arrival_time - 1.0/processes[i].pid;
-        }
-      }
-      // else if (!strcmp(algorithm, "SJF")){
-      //
-      // }
-      // else if (!strcmp(algorithm, "SRT")){
-      //
-      // }
-      // else if (!strcmp(algorithm, "FCFS")){
-      //
-      // }
+      priority_metric =  processes[i].arrival_time - 1.0/processes[i].pid;
       //If first process init linked list
       if (i == 0){
+        //Special case cannot divide by pid == 0
+        priority_metric = processes[i].arrival_time - 1.0/.9;
         proc_scheduler->processes = newNode(processes[0], priority_metric);
         printf("Added pid: %d with priority: %f\n", processes[i].pid, priority_metric);
-
         continue;
       }
       push(&proc_scheduler->processes, processes[i], priority_metric);
