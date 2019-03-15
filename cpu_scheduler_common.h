@@ -16,6 +16,8 @@ typedef struct {
   int num_bursts;
   int* cpu_burst_times;
   int* io_burst_times;
+  int curr_cpu_burst;
+  int curr_io_burst;
 } process;
 
 // Node

@@ -22,9 +22,11 @@ scheduler* runRoundRobin(process* processes, int num_processes, char* rr_queue_t
   //
   // }
   scheduler* proc_scheduler = initScheduler(processes, num_processes);
+  //init proc_scheduler readyQueue
+  proc_scheduler.readyQueue = newNode(peek(&proc_scheduler->processes),
   //Here is where we run the actual algorithm
-  while (!isEmpty(&proc_scheduler->processes)){
-
+  while (!isEmpty(&proc_scheduler->readyQueue) && proc_scheduler->running != NULL && blockingQueue != NULL ){
+    
   }
 
   return proc_scheduler;
