@@ -23,32 +23,21 @@ int main(int argc, char** argv){
   rr_queue_type = argv[8];
 
   process* processes = initProcesses(num_processes, upper_bound, seed, lambda);
+  perror("AFTER INITPROCESSES");
 
-  scheduler* proc_scheduler = runRoundRobin(processes, num_processes, rr_queue_type, rr_time_slice, context_switch_time);
-
-  process p;
-  // printf("Pid: %d, priority %f\n", p.pid, p.arrival_time);
+  // scheduler* proc_scheduler = runRoundRobin(processes, num_processes, rr_queue_type, rr_time_slice, context_switch_time);
   //
   //
-  // pop(&proc_scheduler->processes);
-  // p = peek(&proc_scheduler->processes);
-
-  while(!isEmpty(&proc_scheduler->processes)){
-    p = peek(&proc_scheduler->processes);
-    printf("Pid: %d, arrival_time: %f, priority: %f\n", p.pid, p.arrival_time, proc_scheduler->processes->priority );
-    pop(&proc_scheduler->processes);
-
-  }
-
-  // printf("Pid: %d, priority %f\n", p.pid, p.arrival_time);
-  // for (int i = 0; i < num_processes; i++){
-  //   printf("PROC %d: has %d num_bursts\n",processes[i].pid, processes[i].num_bursts);
+  // while(!isEmpty(&proc_scheduler->processes)){
+  //   p = peek(&proc_scheduler->processes);
+  //   printf("Pid: %d, arrival_time: %f, priority: %f\n", p.pid, p.arrival_time, proc_scheduler->processes->priority );
+  //   pop(&proc_scheduler->processes);
+  //
   // }
 
-  // Node* temp = proc_scheduler->processes;
-  // while(temp){
-  //   printf("PROC: %d: has priority %d\n", temp->data.pid, temp->priority );
-  //   temp = temp->next;
-  // }
+  runFCFS(processes, num_processes, context_switch_time);
+
+
+
   return EXIT_SUCCESS;
 }

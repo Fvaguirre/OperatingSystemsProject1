@@ -9,9 +9,9 @@
 
 typedef struct {
   int pid;
-  double arrival_time;
-  double expected_runtime;
-  double remaining_time;
+  int arrival_time;
+  double expected_runtime; // for tau
+  int remaining_time; // for curr_cpu_burst or curr_io
   int priority;
   int num_bursts;
   int* cpu_burst_times;
@@ -33,6 +33,7 @@ typedef struct {
   Node* readyQueue;
   Node* blockingQueue;
   process* running;
+  int curr_runtime;
 } scheduler;
 
 // Function to Create A New Node

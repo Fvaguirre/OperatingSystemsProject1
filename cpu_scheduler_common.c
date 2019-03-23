@@ -33,6 +33,7 @@ process* initProcesses(int num_processes, int upper_bound, int seed, double lamb
     // fprintf(stdout, "pid: %d\n", pid);
 
     procs[pid].arrival_time = floor(curr_rand);
+    printf("ARR_TIME:%d \n", floor(curr_rand));
     //Set num of cpu bursts
     curr_rand = drand48();
     curr_rand = exponentialAvgFunc(curr_rand, lambda);
@@ -61,11 +62,15 @@ process* initProcesses(int num_processes, int upper_bound, int seed, double lamb
         procs[pid].io_burst_times[cpu_burst] = ceil(curr_rand);
       }
     }
+    procs[pid].curr_cpu_burst = 0;
+    procs[pid].curr_io_burst = 0;
+    procs[pid].remaining_time = 0;
   }
   return procs;
 }
 
 scheduler* initScheduler(process* processes, int num_processes){
+  perror("TOP of initScheduler");
   int i;
   double priority_metric;
   scheduler* proc_scheduler = (scheduler*)calloc(sizeof(scheduler), 1);
@@ -78,16 +83,18 @@ scheduler* initScheduler(process* processes, int num_processes){
         //Special case cannot divide by pid == 0
         priority_metric = processes[i].arrival_time - 1.0/.9;
         proc_scheduler->processes = newNode(processes[0], priority_metric);
-        printf("Added pid: %d with priority: %f\n", processes[i].pid, priority_metric);
+        printf("Added pid: %d with priority: %f and arr_time: %d\n", processes[i].pid, priority_metric, processes[i].arrival_time);
         continue;
       }
       push(&proc_scheduler->processes, processes[i], priority_metric);
-      printf("Added pid: %d with priority: %f\n", processes[i].pid, priority_metric);
+      printf("Added pid: %d with priority: %f and arr_time: %d\n", processes[i].pid, priority_metric, processes[i].arrival_time);
     }
   }
+  //
   proc_scheduler->readyQueue = NULL;
   proc_scheduler->blockingQueue = NULL;
   proc_scheduler->running = NULL;
+  perror("END OF INITSCHEDULER");
   return proc_scheduler;
 }
 
