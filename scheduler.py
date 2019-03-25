@@ -1,8 +1,11 @@
 import queue
 import process
+import logger
 
 class Scheduler(object):
     def __init__(self, processes):
+        self.logger = logger.Logger()
+
         self.processes = queue.PriorityQueue()
         self.ready_queue = queue.PriorityQueue()
         self.running = None
