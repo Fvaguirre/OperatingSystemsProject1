@@ -36,8 +36,11 @@ process* initProcesses(int num_processes, int upper_bound, int seed, double lamb
     printf("ARR_TIME:%d \n", floor(curr_rand));
     //Set num of cpu bursts
     curr_rand = drand48();
-    curr_rand = exponentialAvgFunc(curr_rand, lambda);
-    curr_rand = verifyRandomNum(curr_rand, upper_bound, lambda);
+    // fprintf(stderr, "%RAND BEFORE %f\n",curr_rand );
+    // curr_rand = exponentialAvgFunc(curr_rand, lambda);
+    // curr_rand = verifyRandomNum(curr_rand, upper_bound, lambda);
+    // fprintf(stderr, "%RAND AFTER %f\n",curr_rand );
+
 
     procs[pid].num_bursts = trunc((curr_rand*100)) + 1;
 
@@ -94,6 +97,7 @@ scheduler* initScheduler(process* processes, int num_processes){
   proc_scheduler->readyQueue = NULL;
   proc_scheduler->blockingQueue = NULL;
   proc_scheduler->running = NULL;
+  proc_scheduler->num_jobs = num_processes;
   perror("END OF INITSCHEDULER");
   return proc_scheduler;
 }

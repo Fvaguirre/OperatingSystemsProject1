@@ -1,4 +1,5 @@
 #include "cpu_scheduler_fcfs.h"
+
 //If type == 0, then calc with arrival else calc with rem_time
 double calcFCFSPriority(process p, int type){
   int metric = p.remaining_time;
@@ -12,208 +13,180 @@ double calcFCFSPriority(process p, int type){
     return metric - 1.0/p.pid;
   }
 }
-void populateReadyQueue(scheduler* proc_scheduler, int curr_time){
-  process curr_proc = peek(&proc_scheduler->processes);
-  int curr_proc_arrival = curr_proc.arrival_time;
-  // fprintf(stderr, "IM HERE %d\n", curr_proc_arrival );
-
-  double curr_proc_priority;
-  // fprintf(stderr, "IM HERE\n" );
-
-  while (curr_proc_arrival <= curr_time){
-    curr_proc_priority = calcFCFSPriority(curr_proc, 0);
-    fprintf(stderr, "curr_proc pid: %d , curr_proc arrival: %d \n", curr_proc.pid, curr_proc.arrival_time );
-
-
-    if (isEmpty(&proc_scheduler->readyQueue)){
-      proc_scheduler->readyQueue = newNode(curr_proc, curr_proc_priority);
-    }
-    else{
-      push(&proc_scheduler->readyQueue, curr_proc, curr_proc_priority);
-    }
-    //Finally pop from the processes list
-    pop(&proc_scheduler->processes);
-    //Update curr_proc and curr_proc arrival to continue while loop
-    curr_proc = peek(&proc_scheduler->processes);
-    curr_proc_arrival = curr_proc.arrival_time;
-  }
-}
-int checkProcState(process* proc, int curr_time){
-  int ret_state;
-  if (proc->remaining_time == 0){
-    //Processes is done so return 1
-    ret_state = 1;
-  }
-  else{
-    ret_state = 0;
-  }
-
-  return ret_state;
-}
-void populateBlockingQueue(scheduler* proc_scheduler){
-  process curr_proc = *(proc_scheduler->running);
-  double blocking_priority = calcFCFSPriority(curr_proc, 1);
-  printf("IM HERE\n" );
-  //Set remaining time to remaining io burst time
-  curr_proc.curr_io_burst++;
-  curr_proc.remaining_time = curr_proc.io_burst_times[curr_proc.curr_io_burst-1];
-  if (isEmpty(&proc_scheduler->blockingQueue)){
-    proc_scheduler->blockingQueue = newNode(curr_proc, blocking_priority);
-  }
-  else{
-    push(&proc_scheduler->blockingQueue, curr_proc, blocking_priority);
-  }
-}
-
-int readyQueuetoRunning(scheduler* proc_scheduler){
-  process* proc = (process*)calloc(1, sizeof(process));
-  process p;
-  if (isEmpty(&proc_scheduler->readyQueue)){
-    return 1;
-  }
-  else{
-    p = peek(&proc_scheduler->readyQueue);
-    proc = &p;
-    //Set remaining cpu burst time
-    proc->curr_cpu_burst ++;
-    proc->remaining_time = proc->cpu_burst_times[proc->curr_cpu_burst-1];
-
-    proc_scheduler->running = proc;
-    pop(&proc_scheduler->readyQueue);
-    return 0;
-  }
-}
-
-void checkIOBurstStates(scheduler* proc_scheduler,int curr_time){
-  process curr_process;
-  int rem_time;
-  if (!isEmpty(&proc_scheduler->blockingQueue)){
-    curr_process = peek(&proc_scheduler->blockingQueue);
-    rem_time = curr_process.remaining_time;
-    while (rem_time == 0){
-      pop(&proc_scheduler->blockingQueue);
-      //Add curr_proc to readyQueue
-      if (isEmpty(&proc_scheduler->readyQueue)){
-        proc_scheduler->readyQueue = newNode(curr_process, curr_time);
-      }
-      else{
-        push(&proc_scheduler->readyQueue, curr_process, curr_time);
-      }
-      //update curr_proc and rem time
-      if (!isEmpty(&proc_scheduler->blockingQueue)){
-        curr_process = peek(&proc_scheduler->blockingQueue);
-        rem_time = curr_process.remaining_time;
-      }
-      else{
-        proc_scheduler->blockingQueue = NULL;
-      }
-    }
-  }
-}
-
-void incrementProcessTimes(scheduler* proc_scheduler){
-  Node* temp = NULL;
-  if (proc_scheduler->running != NULL){
-    perror("Before decrement");
-    (proc_scheduler->running->remaining_time)--;
-    perror("After decrement");
-    if (proc_scheduler->running->remaining_time < 0){
-      proc_scheduler->running->remaining_time = 0;
-    }
-  }
-
-
-  if (!isEmpty(&proc_scheduler->blockingQueue)){
-    process p = peek(&proc_scheduler->blockingQueue);
-    p.remaining_time--;
-    temp = newNode(p, proc_scheduler->blockingQueue->priority);
-    while (!isEmpty(&proc_scheduler->blockingQueue)){
-      pop(&proc_scheduler->blockingQueue);
-      p = peek(&proc_scheduler->blockingQueue);
-      p.remaining_time--;
-      push(&temp, p, calcFCFSPriority(p, 1));
-    }
-  }
-  proc_scheduler->blockingQueue = temp;
-}
 
 void printQ(Node* q){
   if (isEmpty(&q)){
     printf("Its Empty\n");
   }
   else{
-    while(!isEmpty(&q)){
-      process p = peek(&q);
+    Node* temp = q;
+    while(temp != NULL){
+      process p = temp->data;
       printf("Process %d, with rem_time %d -> \n", p.pid, p.remaining_time);
-      pop(&q);
+      temp = temp->next;
     }
   }
 }
 
-scheduler* runFCFS(process* processes, int num_processes, int context_switch_time){
-  // fprintf(stderr, "IM HERE\n" );
+void printProc(process* p){
+  if (p == NULL){
+    fprintf(stderr, "No process\n" );
+  }
+  else{
+    fprintf(stderr, "PID: %d, arrival_time: %d, rem_time: %d\n", p->pid, p->arrival_time, p->remaining_time );
+  }
+}
 
-  scheduler* proc_scheduler = initScheduler(processes, num_processes);
-
-
-  int curr_time = 0;
-
-  int curr_running_proc_state = 0;
-  int rc;
-
-  while (!isEmpty(&proc_scheduler->readyQueue) || proc_scheduler->running != NULL || !isEmpty(&proc_scheduler->blockingQueue) || !isEmpty(&proc_scheduler->processes)){
-    //Check if you can move processes from processes queue to readyqueue
-    if (!isEmpty(&proc_scheduler->processes)){
-      perror("Before populate queue");
-      populateReadyQueue(proc_scheduler, curr_time);
-
-      printQ(proc_scheduler->readyQueue);
-
-    }
-    //Check the state of the current processes at curr_time
-    // curr_running_proc_state = checkProcState(proc_scheduler->running, curr_time);
-    if (proc_scheduler->running == NULL){
-      perror("CABBAGE");
-      //Then add highest priority proc from ready queue
-      rc = readyQueuetoRunning(proc_scheduler);
-      if (rc == 1){
-        // perror("READY is empty @ time %d\n", curr_time);
-      fprintf(stderr, "READY is empty @ time %d\n",curr_time );      fprintf(stderr, "PID: %d has arrival time %d and rem_time %d\n", proc_scheduler->running->pid, proc_scheduler->running->arrival_time, proc_scheduler->running->remaining_time );
-
+int readyJobs(scheduler* s, int global_time){
+  int ret = 0;
+  double curr_priority;
+  if (isEmpty(&s->processes)){
+    return ret;
+  }
+  else{
+    while (!isEmpty(&s->processes) && s->processes->data.arrival_time <= global_time){
+      curr_priority = calcFCFSPriority(s->processes->data, 0);
+      if (isEmpty(&s->readyQueue)){
+        s->readyQueue = newNode(s->processes->data, curr_priority);
       }
       else{
-        fprintf(stderr, "PID: %d has arrival time %d and rem_time %d\n", proc_scheduler->running->pid, proc_scheduler->running->arrival_time, proc_scheduler->running->remaining_time );
+        push(&s->readyQueue, s->processes->data, curr_priority);
       }
+      pop(&s->processes);
+      ret++;
+    }
+    return ret;
+  }
+}
+
+process runJob(scheduler* s){
+  process moving;
+  int curr_burst;
+  if (s->running->pid == -1){
+    if (!isEmpty(&s->readyQueue)){
+      moving = peek(&s->readyQueue);
+      curr_burst = moving.curr_cpu_burst;
+      moving.remaining_time = moving.cpu_burst_times[curr_burst];
+      pop(&s->readyQueue);
+      // return 0;
+    }
+    return moving;
+  }
+  //Else there is already a job that is running!
+  else{
+    s->running->remaining_time--;
+    return 1;
+  }
+}
+
+int checkRunningJobState(scheduler* s){
+  if (s->running->pid = -1){
+    return -1;
+  }
+  else{
+    if (s->running->remaining_time <= 0){
+      s->running->remaining_time = 0;
+      //Increment curr_cpu_burst
+      s->running->curr_cpu_burst++;
+      return 1;
     }
     else{
-      //Check the state of the current processes at curr_time
-      if (proc_scheduler->running != NULL){
-        curr_running_proc_state = checkProcState(proc_scheduler->running, curr_time);
-      }
-      //If curr running process finished
-      if (curr_running_proc_state == 1){
-        //Move running to blocking
-        populateBlockingQueue(proc_scheduler);
-      }
-      //Else keep running the current process;f
+      return 0;
     }
-
-    //Check blocking queue io bursts at curr_time
-    if (!isEmpty(&proc_scheduler->blockingQueue)){
-      checkIOBurstStates(proc_scheduler, curr_time);
-    }
-    perror("AT THE END");
-    incrementProcessTimes(proc_scheduler);
-    perror("==================================================");
-
-
-
-
-
-
-
-
-    //
-    curr_time++;
   }
+}
+
+int moveJobToBlocking(scheduler* s){
+  //Set rem_time to remaining i_o burst
+  int curr_io = s->running->curr_io_burst;
+  printProc(s->running);
+  fprintf(stderr, "Curr io %d\n",curr_io );
+  s->running->remaining_time = s->running->io_burst_times[curr_io];
+  double blocking_priority = calcFCFSPriority(*(s->running),1);
+
+  //If empty make newNode
+  if (isEmpty(&s->blockingQueue)){
+    perror("WE HERE in block");
+
+    s->blockingQueue = newNode(*(s->running), blocking_priority);
+  }
+  else{
+    push(&s->blockingQueue, *(s->running), blocking_priority);
+  }
+  s->running = NULL;
+
+}
+
+scheduler* runFCFS(process* processes, int num_processes, int context_switch_time){
+
+  int jobs_completed = 0;
+  scheduler* proc_scheduler = initScheduler(processes, num_processes);
+  proc_scheduler->running = calloc(1, sizeof(process));
+  proc_scheduler->running->pid = -1;
+  int global_time = 0;
+  int jobs_added = 0;
+  int move_to_running = 0;
+  int is_done;
+  global_time = 2 ;
+  jobs_added = readyJobs(proc_scheduler, global_time);
+  fprintf(stderr, "Jobs added: %d\n", jobs_added );
+  printQ(proc_scheduler->readyQueue);
+  move_to_running = runJob(proc_scheduler);
+  fprintf(stderr, "Moved ret: %d\n", move_to_running );
+  printProc(proc_scheduler->running);
+  printQ(proc_scheduler->readyQueue);
+  move_to_running = runJob(proc_scheduler);
+  move_to_running = runJob(proc_scheduler);
+  move_to_running = runJob(proc_scheduler);
+
+  printProc(proc_scheduler->running);
+  printProc(proc_scheduler->running);
+  printProc(proc_scheduler->running);
+  // proc_scheduler->running->remaining_time = 10;
+  // printProc(proc_scheduler->running);
+
+
+
+  is_done = checkRunningJobState(proc_scheduler);
+  printProc(proc_scheduler->running);
+  fprintf(stderr, "LISTEN: pid: %d, rem_time: %d\n", proc_scheduler->running->pid, proc_scheduler->running->remaining_time);
+
+  if (is_done == 1){
+    fprintf(stderr, "FINISHED\n" );
+    fprintf(stderr, "LISTEN: pid: %d, rem_time: %d\n", proc_scheduler->running->pid, proc_scheduler->running->remaining_time);
+    //
+    // printProc(proc_scheduler->running);
+    // moveJobToBlocking(proc_scheduler);
+    // perror("WE HERE");
+    // printProc(proc_scheduler->running);
+
+  }
+  else{
+    fprintf(stderr, "%d\n",is_done );
+  }
+
+
+
+
+
+
+
+
+  // global_time = 6;
+  // jobs_added = readyJobs(proc_scheduler, global_time);
+  // fprintf(stderr, "Jobs added: %d\n", jobs_added );
+  // printQ(proc_scheduler->readyQueue);
+
+
+  // while (jobs_complete < proc_schduler->num_jobs){
+  //   jobs_added = readyJobs(proc_scheduler, global_time);
+  //   fprintf(stderr, "Jobs added: %d\n", jobs_added );
+  //   move_to_running = runJob(proc_scheduler);
+  //   is_done = checkRunningJobState(proc_scheduler);
+  //   if (is_done == 1){
+  //     //Move running to blockingQueue
+  //     moveJobToBlocking(proc_scheduler, global_time);
+  //   }
+  //
+  // }
 }

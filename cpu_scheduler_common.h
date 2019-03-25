@@ -33,7 +33,7 @@ typedef struct {
   Node* readyQueue;
   Node* blockingQueue;
   process* running;
-  int curr_runtime;
+  int num_jobs;
 } scheduler;
 
 // Function to Create A New Node
