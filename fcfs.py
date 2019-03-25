@@ -67,6 +67,7 @@ def runIO(p_scheduler):
 def runFCFS(processes, num_processes, context_switch_time):
     jobs_completed = 0
     global_time = 0
+
     p_scheduler = scheduler.Scheduler(processes)
     # global_time += 1
     # rc = readyJobs(p_scheduler, global_time)
@@ -88,7 +89,7 @@ def runFCFS(processes, num_processes, context_switch_time):
         running_state = checkRunningJobState(p_scheduler)
         print(p_scheduler)
         print()
-        
+
         if running_state == 1:
             if p_scheduler.running.finished == True:
                 jobs_completed += 1

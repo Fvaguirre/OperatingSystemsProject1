@@ -4,7 +4,8 @@ import logger
 
 class Scheduler(object):
     def __init__(self, processes):
-        self.logger = logger.Logger()
+        self.logger = dict()
+
 
         self.processes = queue.PriorityQueue()
         self.ready_queue = queue.PriorityQueue()
@@ -12,6 +13,7 @@ class Scheduler(object):
         self.blocking = []
         for p in processes:
             self.processes.put((p.arrival_time, p.pid, p))
+            self.logger[p.pid] = logger.Logger()
 
     def __str__(self):
         return "Processes Queue: \n" + str(self.processes.queue) + "\nReady Queue: \n" +\
