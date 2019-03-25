@@ -55,7 +55,7 @@ def runIO(p_scheduler):
         for process in p_scheduler.blocking:
             process.remaining_time -= 1
             if process.remaining_time == 0:
-                if process.curr_io_burst < process.curr_io_burst - 2:
+                if process.curr_io_burst < process.num_bursts - 2:
                     process.curr_io_burst += 1
 
                 finished.append(process)
@@ -88,9 +88,11 @@ def runFCFS(processes, num_processes, context_switch_time):
         running_state = checkRunningJobState(p_scheduler)
         print(p_scheduler)
         print()
+        
         if running_state == 1:
             if p_scheduler.running.finished == True:
                 jobs_completed += 1
+                p_scheduler.running = None
             else:
                 moveRunningToBlocking(p_scheduler)
         print(p_scheduler)
