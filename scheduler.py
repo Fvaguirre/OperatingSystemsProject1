@@ -24,3 +24,27 @@ class Scheduler(object):
         return "Processes Queue: \n" + str(self.processes.queue) + "\nReady Queue: \n" +\
         str(self.ready_queue.queue) + "\nRunning : \n" + str(self.running) + "\n Blocking: \n" +\
         str(self.blocking)
+
+    def printArrivals(self):
+        temp = queue.PriorityQueue()
+        while not self.processes.empty():
+            curr = self.processes.get()
+            print("Process %c [NEW] (arrival time %d ms) %d CPU bursts" % (curr[1], curr[2].arrival_time, curr[2].num_bursts))
+            temp.put(curr)
+        self.processes = temp
+
+    def returnPrintableReadyQueue(self):
+        if self.ready_queue.empty():
+            return "<empty>"
+        temp = queue.PriorityQueue()
+        ret = ""
+        while not self.ready_queue.empty():
+            curr = self.ready_queue.get()
+            ret += curr[1]
+            if not self.ready_queue.empty():
+                ret += " "
+            temp.put(curr)
+        ret.rstrip()
+        self.ready_queue = temp
+
+        return ret

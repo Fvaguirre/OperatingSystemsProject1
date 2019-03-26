@@ -17,6 +17,8 @@ if __name__ == '__main__':
     rr_queue_type = sys.argv[8]
 
     processes = common.initProcesses(num_processes, upper_bound, seed, l)
+    ##########################################################################
+    # Processes to debug with: comment out line 19 above and uncomment this section
     # processes = []
     # p = scheduler.process.Process(0, 0, 3)
     # p.cpu_burst_times.append(1)
@@ -39,7 +41,8 @@ if __name__ == '__main__':
     fcfs.runFCFS(processes, num_processes, context_switch_time)
     print()
     print()
-
+    ###############################################################################
+    # Processes to debug with: comment out line 65 below and uncomment this section
     # processes = []
     # p = scheduler.process.Process(0, 0, 3)
     # p.cpu_burst_times.append(1)
@@ -59,10 +62,7 @@ if __name__ == '__main__':
     #
     # processes.append(p)
 
+    # We need to reinit the processes before we run them through an algo again
     processes = common.initProcesses(num_processes, upper_bound, seed, l)
 
     rr.runRR(processes, num_processes, context_switch_time, rr_time_slice, rr_queue_type)
-
-
-    # print(p_scheduler.processes.queue)
-    # print(p_scheduler.processes.get())

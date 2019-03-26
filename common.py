@@ -17,7 +17,12 @@ def initProcesses(num_processes, upper_bound, seed, l):
     r = rand48.Rand48(0)
     r.srand(seed)
 
-    for pid in range(0, num_processes):
+    count = 0
+    # Loop through alphabet for pids
+    for pid in range( ord('A'), ord('Z') + 1):
+        # If already generated num_processes stop looping through
+        if count == num_processes:
+            break
         #Generate arrival time
         curr_arrival_time = r.drand()
         curr_arrival_time = exponentialAvgFunc(curr_arrival_time, l)
@@ -26,7 +31,7 @@ def initProcesses(num_processes, upper_bound, seed, l):
         #Generate num of cpu bursts
         curr_num_bursts = r.drand()
         curr_num_bursts = math.trunc((curr_num_bursts*100)) + 1
-        p = process.Process(pid, curr_arrival_time, curr_num_bursts)
+        p = process.Process(chr(pid), curr_arrival_time, curr_num_bursts)
 
         # print("Pid: %d with arrival time %d, num_bursts %d has been created!" % (pid, curr_arrival_time, curr_num_bursts))
 
@@ -48,6 +53,7 @@ def initProcesses(num_processes, upper_bound, seed, l):
                 #Append it
                 p.io_burst_times.append(curr_io_burst_time)
 
+        count += 1
         processes.append(p)
         print(p)
     return processes

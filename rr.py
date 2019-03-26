@@ -27,8 +27,8 @@ def preemptProcess(p_scheduler, rr_queue_type, global_time, context_switch_time)
         priority_metric = float(1.0/global_time)
 
     p_scheduler.ready_queue.put((priority_metric, p_scheduler.running.pid, p_scheduler.running))
-    p_scheduler.running = None
     p_scheduler.logger[p_scheduler.running.pid].num_context_switches += 1
+    p_scheduler.running = None
     global_time = fcfs.runContextSwitch(p_scheduler, global_time, context_switch_time)
     return global_time
 
