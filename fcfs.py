@@ -84,6 +84,7 @@ def runContextSwitch(p_scheduler, global_time, context_switch_time):
          jobs_ready = runIO(p_scheduler)
          requeueBlocking(p_scheduler, jobs_ready, global_time)
          global_time += 1
+         tickWaitTime(p_scheduler)
          c_s_time += 1
     return global_time
 
@@ -95,13 +96,13 @@ def logTimes(p_scheduler):
 def runFCFS(processes, num_processes, context_switch_time):
     jobs_completed = 0
     global_time = 0
-    in_context_switch = False
-    c_s_time = 0
+    # in_context_switch = False
+    # c_s_time = 0
     p_scheduler = scheduler.Scheduler(processes)
     # global_time += 1
     # rc = readyJobs(p_scheduler, global_time)
     # print("RC: %d" % rc)
-    print()
+    # print()
 
     while jobs_completed < num_processes:
         # if global_time == 50:
@@ -112,7 +113,7 @@ def runFCFS(processes, num_processes, context_switch_time):
         # print(p_scheduler)
         # print()
 
-        tickWaitTime(p_scheduler)
+        # tickWaitTime(p_scheduler)
 
         run_job_rc = runJob(p_scheduler)
         # if curr job was just moved to running
@@ -152,7 +153,9 @@ def runFCFS(processes, num_processes, context_switch_time):
         #     for p in jobs_ready:
         #         p_scheduler.processes.put((global_time, p.pid, p))
         # jobs_ready = []
+        tickWaitTime(p_scheduler)
+
         global_time += 1
         print("========================================================")
     logs = p_scheduler.logger
-    # print(logs)
+    print(logs)

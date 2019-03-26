@@ -1,6 +1,7 @@
 import sys
 # import math
 import fcfs
+import rr
 
 import common
 import scheduler
@@ -37,6 +38,9 @@ if __name__ == '__main__':
 
     # p_scheduler = scheduler.Scheduler(processes)
     fcfs.runFCFS(processes, num_processes, context_switch_time)
+    print()
+    print()
+    rr.runRR(processes, num_processes, context_switch_time, rr_time_slice, rr_queue_type)
 
 
     # print(p_scheduler.processes.queue)

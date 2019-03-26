@@ -9,6 +9,7 @@ class Process(object):
       self.remaining_time = 0
       self.curr_io_burst = 0
       self.curr_cpu_burst = 0
+      self.tau = 0
 
   def __str__(self):
       return "{Pid: " + str(self.pid) + ", arrived: " + str(self.arrival_time) + ", num_bursts: " +\
