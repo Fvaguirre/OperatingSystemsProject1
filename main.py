@@ -16,30 +16,51 @@ if __name__ == '__main__':
     rr_time_slice = int(sys.argv[7])
     rr_queue_type = sys.argv[8]
 
-    # processes = common.initProcesses(num_processes, upper_bound, seed, l)
-    processes = []
-    p = scheduler.process.Process(0, 0, 3)
-    p.cpu_burst_times.append(1)
-    p.cpu_burst_times.append(2)
-    p.cpu_burst_times.append(4)
-    p.io_burst_times.append(3)
-    p.io_burst_times.append(2)
+    processes = common.initProcesses(num_processes, upper_bound, seed, l)
+    # processes = []
+    # p = scheduler.process.Process(0, 0, 3)
+    # p.cpu_burst_times.append(1)
+    # p.cpu_burst_times.append(2)
+    # p.cpu_burst_times.append(4)
+    # p.io_burst_times.append(3)
+    # p.io_burst_times.append(2)
+    # # p.io_burst_times.append(1)
+    # processes.append(p)
+    #
+    # p = scheduler.process.Process(1, 1, 3)
+    # p.cpu_burst_times.append(2)
+    # p.cpu_burst_times.append(2)
+    # p.cpu_burst_times.append(5)
     # p.io_burst_times.append(1)
-    processes.append(p)
+    # p.io_burst_times.append(2)
+    #
+    # processes.append(p)
 
-    p = scheduler.process.Process(1, 1, 3)
-    p.cpu_burst_times.append(2)
-    p.cpu_burst_times.append(2)
-    p.cpu_burst_times.append(5)
-    p.io_burst_times.append(1)
-    p.io_burst_times.append(2)
-
-    processes.append(p)
-
-    # p_scheduler = scheduler.Scheduler(processes)
     fcfs.runFCFS(processes, num_processes, context_switch_time)
     print()
     print()
+
+    # processes = []
+    # p = scheduler.process.Process(0, 0, 3)
+    # p.cpu_burst_times.append(1)
+    # p.cpu_burst_times.append(2)
+    # p.cpu_burst_times.append(4)
+    # p.io_burst_times.append(3)
+    # p.io_burst_times.append(2)
+    # # p.io_burst_times.append(1)
+    # processes.append(p)
+    #
+    # p = scheduler.process.Process(1, 1, 3)
+    # p.cpu_burst_times.append(2)
+    # p.cpu_burst_times.append(2)
+    # p.cpu_burst_times.append(5)
+    # p.io_burst_times.append(1)
+    # p.io_burst_times.append(2)
+    #
+    # processes.append(p)
+
+    processes = common.initProcesses(num_processes, upper_bound, seed, l)
+
     rr.runRR(processes, num_processes, context_switch_time, rr_time_slice, rr_queue_type)
 
 

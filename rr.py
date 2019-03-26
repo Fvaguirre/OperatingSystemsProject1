@@ -28,13 +28,13 @@ def preemptProcess(p_scheduler, rr_queue_type, global_time, context_switch_time)
 
     p_scheduler.ready_queue.put((priority_metric, p_scheduler.running.pid, p_scheduler.running))
     p_scheduler.running = None
+    p_scheduler.logger[p_scheduler.running.pid].num_context_switches += 1
     global_time = fcfs.runContextSwitch(p_scheduler, global_time, context_switch_time)
     return global_time
 
 
 def runPreemption(p_scheduler, global_time, rr_queue_type, context_switch_time):
     p_scheduler.logger[p_scheduler.running.pid].num_premptions += 1
-    p_scheduler.logger[p_scheduler.running.pid].num_context_switches += 1
     global_time = fcfs.runContextSwitch(p_scheduler, global_time, context_switch_time)
     global_time = preemptProcess(p_scheduler, rr_queue_type, global_time, context_switch_time)
     return global_time
@@ -47,9 +47,9 @@ def runRR(processes, num_processes, context_switch_time, rr_time_slice, rr_queue
 
     while jobs_completed < num_processes:
         print("GLOBAL TIME: %d" % global_time)
-        print(p_scheduler)
+        # print(p_scheduler)
         jobs_readied = fcfs.readyJobs(p_scheduler, global_time)
-        print(p_scheduler)
+        # print(p_scheduler)
         run_job_rc = fcfs.runJob(p_scheduler)
         if run_job_rc == 0:
              #process first half of context_switch_time

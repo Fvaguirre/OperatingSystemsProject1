@@ -6,7 +6,7 @@ class Process(object):
       self.finished = False
       self.cpu_burst_times = []
       self.io_burst_times = []
-      self.remaining_time = 0
+      self.remaining_time = -1
       self.curr_io_burst = 0
       self.curr_cpu_burst = 0
       self.tau = 0
