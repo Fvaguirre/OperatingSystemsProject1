@@ -43,7 +43,10 @@ def runJob(p_scheduler):
             current_node = p_scheduler.ready_queue.get()
             current_process = current_node[2]
             #Edit the processes remaining time
-            current_process.remaining_time = current_process.cpu_burst_times[current_process.curr_cpu_burst]
+            if current_process.remaining_time == -1 or current_process.remaining_time == 0:
+                current_process.remaining_time = current_process.cpu_burst_times[current_process.curr_cpu_burst]
+            # else:
+            #     current_process.remainin
             p_scheduler.running = current_process
             return 0
         return -1
@@ -89,7 +92,8 @@ def runIO(p_scheduler):
             # Remove one tick from remaining io burst time
             process.remaining_time -= 1
             # If given process is done with io
-            if process.remaining_time == 0:
+            if process.remaining_time <= 0:
+                process.remaining_time = 0
                 # If given process is not at its final io burst
                 if process.curr_io_burst < process.num_bursts - 2:
                     # Increment the current io burst

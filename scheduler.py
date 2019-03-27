@@ -23,7 +23,7 @@ class Scheduler(object):
     def __str__(self):
         return "Processes Queue: \n" + str(self.processes.queue) + "\nReady Queue: \n" +\
         str(self.ready_queue.queue) + "\nRunning : \n" + str(self.running) + "\n Blocking: \n" +\
-        str(self.blocking)
+        str(self.blocking) + "\n"
 
     def printArrivals(self):
         temp = queue.PriorityQueue()
