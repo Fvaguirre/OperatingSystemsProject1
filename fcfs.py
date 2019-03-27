@@ -1,5 +1,5 @@
 import process
-import scheduler
+import scheduler, event
 
 # Adds processes from p_scheduler.processes to the readyQueue
 # Returns 0 if there are no more processes in scheduler.processes;
@@ -20,7 +20,10 @@ def readyJobs(p_scheduler, global_time):
             p_scheduler.ready_queue.put((current_node[0], current_node[1], current_node[2]))
             # Print event
             r_q = p_scheduler.returnPrintableReadyQueue()
-            print("time %dms: Process %c arrived; added to ready queue [Q %s]" % (global_time, current_node[1], r_q))
+            output = event.Event("arrival", global_time, current_node[2], r_q)
+            p_scheduler.addEvent(output)
+
+            # print("time %dms: Process %c arrived; added to ready queue [Q %s]" % (global_time, current_node[1], r_q))
             rc += 1
         return rc
 
@@ -36,7 +39,7 @@ def tickWaitTime(p_scheduler):
 
 # Returns -1 nothing in running; returns 0 if job moved to running;
 # returns 1 if curr running job ticks for 1 sec
-def runJob(p_scheduler):
+def runJob(p_scheduler, global_time):
     # If no processes are running
     if p_scheduler.running is None:
         if not p_scheduler.ready_queue.empty():
@@ -48,6 +51,11 @@ def runJob(p_scheduler):
             # else:
             #     current_process.remainin
             p_scheduler.running = current_process
+            r_q = p_scheduler.returnPrintableReadyQueue()
+            output = event.Event("cpu_start", global_time, p_scheduler.running, r_q)
+            p_scheduler.addEvent(output)
+            # print("time %dms: Process %c started using the CPU for %dms burst [Q %s]" % (global_time, p_scheduler.running.pid,\
+             # p_scheduler.running.cpu_burst_times[p_scheduler.running.curr_cpu_burst],r_q ))
             return 0
         return -1
     else:
@@ -57,7 +65,7 @@ def runJob(p_scheduler):
 
 # Returns -1 if no job is running; 1 if curr running job is done;
 # 0 if curr_running job is not done
-def checkRunningJobState(p_scheduler):
+def checkRunningJobState(p_scheduler, global_time):
     if p_scheduler.running is None:
         return -1
     else:
@@ -67,6 +75,11 @@ def checkRunningJobState(p_scheduler):
                 p_scheduler.running.finished = True
             else:
                 p_scheduler.running.curr_cpu_burst += 1
+                r_q = p_scheduler.returnPrintableReadyQueue()
+                output = event.Event("cpu_finish", global_time, p_scheduler.running, r_q)
+                p_scheduler.addEvent(output)
+                # print("time %dms: Process %c completed a CPU burst; %d bursts to go [Q %s]" % (global_time, p_scheduler.running.pid,\
+                 # p_scheduler.running.num_bursts - p_scheduler.curr_cpu_burst, r_q))
             return 1
         else:
             return 0
@@ -74,10 +87,17 @@ def checkRunningJobState(p_scheduler):
 # Assumes Running is not None
 # Moves the running process to the blocking queue and sets running to None
 # Sets moved process' remaing time to the next io_burst
-def moveRunningToBlocking(p_scheduler):
+def moveRunningToBlocking(p_scheduler, global_time):
     p_scheduler.running.remaining_time = p_scheduler.running.io_burst_times[p_scheduler.running.curr_io_burst]
     p_scheduler.blocking.append(p_scheduler.running)
+    # p_scheduler.running = None
+    r_q = p_scheduler.returnPrintableReadyQueue()
+    output = event.Event("io_start", global_time, p_scheduler.running, r_q)
+    p_scheduler.addEvent(output)
+    # print("time %dms: Process %c switching out of CPU; will block on I/O until time %dms [Q %s]" % (global_time, p_scheduler.running.pid,\
+    #  global_time + p_scheduler.running.io_burst_times[p_scheduler.running.curr_io_burst], r_q))
     p_scheduler.running = None
+
 
 # Subtracts 1 tick from each process in the blocking array and returns the list
 # (if any) of all process done with their current io burst
@@ -101,8 +121,8 @@ def runIO(p_scheduler):
                 # Add finished process to return list
                 finished.append(process)
                 # Delete it from the blocking array
-                del p_scheduler.blocking[index]
-                continue
+                p_scheduler.blocking.remove(process)
+
             index += 1
         return finished
 
@@ -150,7 +170,7 @@ def runFCFS(processes, num_processes, context_switch_time):
 
         # tickWaitTime(p_scheduler)
 
-        run_job_rc = runJob(p_scheduler)
+        run_job_rc = runJob(p_scheduler, global_time)
         # if curr job was just moved to running
         if run_job_rc == 0:
              #process first half of context_switch_time
@@ -173,7 +193,7 @@ def runFCFS(processes, num_processes, context_switch_time):
                 logTimes(p_scheduler)
                 p_scheduler.running = None
             else:
-                moveRunningToBlocking(p_scheduler)
+                moveRunningToBlocking(p_scheduler, global_time)
                 #Process second half of context_switch_time
                 global_time = runContextSwitch(p_scheduler, global_time, context_switch_time)
         # print(p_scheduler)

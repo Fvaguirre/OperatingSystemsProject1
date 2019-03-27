@@ -1,10 +1,11 @@
 import queue
 import process
-import logger
+import logger, event
 
 class Scheduler(object):
     def __init__(self, processes, rr_type = 'END'):
         self.logger = dict()
+        self.events = []
 
         self.rr_type = rr_type
         self.processes = queue.PriorityQueue()
@@ -35,16 +36,22 @@ class Scheduler(object):
 
     def returnPrintableReadyQueue(self):
         if self.ready_queue.empty():
-            return "<empty>"
+            return "[Q <empty>}"
         temp = queue.PriorityQueue()
-        ret = ""
+        ret = "[Q "
         while not self.ready_queue.empty():
             curr = self.ready_queue.get()
             ret += curr[1]
             if not self.ready_queue.empty():
                 ret += " "
             temp.put(curr)
-        ret.rstrip()
         self.ready_queue = temp
+        ret += "]"
 
         return ret
+
+    def addEvent(self, e):
+        self.events.append(e)
+    def printEvents(self):
+        for i in self.events:
+            print(i)

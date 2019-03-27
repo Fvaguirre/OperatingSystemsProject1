@@ -38,6 +38,8 @@ if __name__ == '__main__':
     #
     # processes.append(p)
 
+    # processes = common.initProcesses(num_processes, upper_bound, seed, l)
+
     # fcfs.runFCFS(processes, num_processes, context_switch_time)
     print()
     print()
@@ -78,6 +80,11 @@ if __name__ == '__main__':
     # p.io_burst_times = [1, 3]
     #
     # processes.append(p)
+    # context_switch_time =
+    # num_processes = 5
+    # rr_time_slice = 3
+
+    ##############################################
     #
     # p = scheduler.process.Process('F', 6, 10)
     # p.cpu_burst_times = [1, 2, 1, 5, 20, 10, 9, 5, 10, 13]
@@ -99,5 +106,7 @@ if __name__ == '__main__':
 
     # We need to reinit the processes before we run them through an algo again
     processes = common.initProcesses(num_processes, upper_bound, seed, l)
-
+    print("Time slice: %d" % rr_time_slice)
+    print("Context Switch Time %d" % context_switch_time)
+    print()
     rr.runRR(processes, num_processes, context_switch_time, rr_time_slice, rr_queue_type)
