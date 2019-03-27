@@ -1,6 +1,6 @@
 import process
 class Event(object):
-    def __init__(self, type, time, p, q, tau):
+    def __init__(self, type, time, p, q, tau, cts):
         self.type = type
         self.text = ""
         self.time = time
@@ -15,14 +15,20 @@ class Event(object):
           else:
               self.text = "time %dms: Process %c started using the CPU for %dms burst %s" %(time, p.pid , p.cpu_burst_times[p.curr_cpu_burst], q)
         elif type == "cpu_finish":
-          if p.curr_cpu_burst == p.num_bursts -1:
-               self.text = "time %dms: Process %c completed a CPU burst; %d burst to go %s" %(time, p.pid, p.num_bursts - p.curr_cpu_burst, q)
+          if tau is None:
+            if p.curr_cpu_burst == p.num_bursts -1:
+                 self.text = "time %dms: Process %c completed a CPU burst; %d burst to go %s" %(time, p.pid, p.num_bursts - p.curr_cpu_burst, q)
+            else:
+                self.text = "time %dms: Process %c completed a CPU burst; %d bursts to go %s" %(time, p.pid, p.num_bursts - p.curr_cpu_burst, q)
           else:
-              self.text = "time %dms: Process %c completed a CPU burst; %d bursts to go %s" %(time, p.pid, p.num_bursts - p.curr_cpu_burst, q)
-        elif type == "tau_recalct":
+             if p.curr_cpu_burst == p.num_bursts -1:
+                 self.text = "time %dms: Process %c (tau %dms) completed a CPU burst; %d burst to go %s" %(time, p.pid, tau, p.num_bursts - p.curr_cpu_burst, q)
+             else:
+                 self.text = "time %dms: Process %c (tau %dms) completed a CPU burst; %d bursts to go %s" %(time, p.pid, tau, p.num_bursts - p.curr_cpu_burst, q)
+        elif type == "tau_recalc":
           self.text = "time %dms: Recalculated tau = %dms for process %c %s" %(time, tau, p.pid, q)
         elif type == "io_start":
-           self.text = "time %dms: Process %c switching out of CPU; will block on I/O until time %dms %s" %(time, p.pid, time+p.io_burst_times[p.curr_io_burst], q)
+           self.text = "time %dms: Process %c switching out of CPU; will block on I/O until time %dms %s" %(time, p.pid, time+p.io_burst_times[p.curr_io_burst]+cts*.5, q)
         elif type == "io_finish":
           if tau is None:
             self.text = "time %dms: Process %c completed I/O; added to ready queue %s" %(time, p.pid, q)
