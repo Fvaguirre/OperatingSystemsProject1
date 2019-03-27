@@ -36,7 +36,7 @@ class Scheduler(object):
 
     def returnPrintableReadyQueue(self):
         if self.ready_queue.empty():
-            return "[Q <empty>}"
+            return "[Q <empty>]"
         temp = queue.PriorityQueue()
         ret = "[Q "
         while not self.ready_queue.empty():

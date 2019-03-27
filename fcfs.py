@@ -101,7 +101,7 @@ def moveRunningToBlocking(p_scheduler, global_time):
 
 # Subtracts 1 tick from each process in the blocking array and returns the list
 # (if any) of all process done with their current io burst
-def runIO(p_scheduler):
+def runIO(p_scheduler, p = None):
     finished = []
     # If blocking is empty return empty list
     if len(p_scheduler.blocking) == 0:
@@ -109,8 +109,9 @@ def runIO(p_scheduler):
     else:
         index = 0
         for process in p_scheduler.blocking:
-            # Remove one tick from remaining io burst time
-            process.remaining_time -= 1
+            if p is None or process.pid != p.pid:
+                # Remove one tick from remaining io burst time
+                process.remaining_time -= 1
             # If given process is done with io
             if process.remaining_time <= 0:
                 process.remaining_time = 0
@@ -126,10 +127,13 @@ def runIO(p_scheduler):
             index += 1
         return finished
 
-def requeueBlocking(p_scheduler, jobs, global_time):
+def requeuefromBlocking(p_scheduler, jobs, global_time):
     if len(jobs) > 0:
         for p in jobs:
-            p_scheduler.processes.put((global_time, p.pid, p))
+            r_q = p_scheduler.returnPrintableReadyQueue()
+            output = event.Event("io_finish", global_time, p, r_q)
+            p_scheduler.addEvent(output)
+            p_scheduler.ready_queue.put((global_time, p.pid, p))
 
 
 def runContextSwitch(p_scheduler, global_time, context_switch_time):
@@ -201,7 +205,7 @@ def runFCFS(processes, num_processes, context_switch_time):
         jobs_ready = runIO(p_scheduler)
         # print(p_scheduler)
         #might have to move to ready directly instead of processes
-        requeueBlocking(p_scheduler, jobs_ready, global_time)
+        requeuefromBlocking(p_scheduler, jobs_ready, global_time)
         # if len(jobs_ready) > 0:
         #     # print("Jobs ready:")
         #     # print(jobs_ready)

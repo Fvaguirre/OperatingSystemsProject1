@@ -1,0 +1,78 @@
+
+
+{Pid: A, arrived: 9, num_bursts: 16, Finished: False, Rem time: -1, curr_io_burst: 0, curr_cpu_burst: 0}
+Time slice: 120
+Context Switch Time 4
+
+{'A': CPU time: 1285
+Wait time: 17
+Turnarounds: [56, 60, 39, 47, 137, 64, 68, 113, 11, 24, 76, 122, 9, 62, 200, 197]
+Context Switches: 16
+Premptions: 0
+}
+time 9ms: Process A arrived; added to ready queue [Q A]
+time 11ms: Process A started using the CPU with 56ms remaining [Q <empty>}
+time 68ms: Process A completed a CPU burst; 15 bursts to go [Q <empty>}
+time 68ms: Process A switching out of CPU; will block on I/O until time 91ms [Q <empty>}
+time 92ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 93ms: Process A started using the CPU with 60ms remaining [Q <empty>}
+time 154ms: Process A completed a CPU burst; 14 bursts to go [Q <empty>}
+time 154ms: Process A switching out of CPU; will block on I/O until time 307ms [Q <empty>}
+time 308ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 309ms: Process A started using the CPU with 39ms remaining [Q <empty>}
+time 349ms: Process A completed a CPU burst; 13 bursts to go [Q <empty>}
+time 349ms: Process A switching out of CPU; will block on I/O until time 399ms [Q <empty>}
+time 400ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 401ms: Process A started using the CPU with 47ms remaining [Q <empty>}
+time 449ms: Process A completed a CPU burst; 12 bursts to go [Q <empty>}
+time 449ms: Process A switching out of CPU; will block on I/O until time 451ms [Q <empty>}
+time 452ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 453ms: Process A started using the CPU with 137ms remaining [Q <empty>}
+time 591ms: Process A completed a CPU burst; 11 bursts to go [Q <empty>}
+time 591ms: Process A switching out of CPU; will block on I/O until time 615ms [Q <empty>}
+time 616ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 617ms: Process A started using the CPU with 64ms remaining [Q <empty>}
+time 682ms: Process A completed a CPU burst; 10 bursts to go [Q <empty>}
+time 682ms: Process A switching out of CPU; will block on I/O until time 697ms [Q <empty>}
+time 698ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 699ms: Process A started using the CPU with 68ms remaining [Q <empty>}
+time 768ms: Process A completed a CPU burst; 9 bursts to go [Q <empty>}
+time 768ms: Process A switching out of CPU; will block on I/O until time 832ms [Q <empty>}
+time 833ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 834ms: Process A started using the CPU with 113ms remaining [Q <empty>}
+time 948ms: Process A completed a CPU burst; 8 bursts to go [Q <empty>}
+time 948ms: Process A switching out of CPU; will block on I/O until time 964ms [Q <empty>}
+time 965ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 966ms: Process A started using the CPU with 11ms remaining [Q <empty>}
+time 978ms: Process A completed a CPU burst; 7 bursts to go [Q <empty>}
+time 978ms: Process A switching out of CPU; will block on I/O until time 1140ms [Q <empty>}
+time 1141ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 1142ms: Process A started using the CPU with 24ms remaining [Q <empty>}
+time 1167ms: Process A completed a CPU burst; 6 bursts to go [Q <empty>}
+time 1167ms: Process A switching out of CPU; will block on I/O until time 1284ms [Q <empty>}
+time 1285ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 1286ms: Process A started using the CPU with 76ms remaining [Q <empty>}
+time 1363ms: Process A completed a CPU burst; 5 bursts to go [Q <empty>}
+time 1363ms: Process A switching out of CPU; will block on I/O until time 1391ms [Q <empty>}
+time 1392ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 1393ms: Process A started using the CPU with 122ms remaining [Q <empty>}
+time 1516ms: Process A completed a CPU burst; 4 bursts to go [Q <empty>}
+time 1516ms: Process A switching out of CPU; will block on I/O until time 1549ms [Q <empty>}
+time 1550ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 1551ms: Process A started using the CPU with 9ms remaining [Q <empty>}
+time 1561ms: Process A completed a CPU burst; 3 bursts to go [Q <empty>}
+time 1561ms: Process A switching out of CPU; will block on I/O until time 1629ms [Q <empty>}
+time 1630ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 1631ms: Process A started using the CPU with 62ms remaining [Q <empty>}
+time 1694ms: Process A completed a CPU burst; 2 bursts to go [Q <empty>}
+time 1694ms: Process A switching out of CPU; will block on I/O until time 1771ms [Q <empty>}
+time 1772ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 1773ms: Process A started using the CPU with 200ms remaining [Q <empty>}
+time 1974ms: Process A completed a CPU burst; 1 burst to go [Q <empty>}
+time 1974ms: Process A switching out of CPU; will block on I/O until time 1985ms [Q <empty>}
+time 1986ms: Process A completed I/O; added to ready queue [Q <empty>}
+time 1987ms: Process A started using the CPU with 197ms remaining [Q <empty>}
+Average CPU burst:
+80.3125
+Context Switches: 16
+Preemptions: 0
