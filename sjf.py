@@ -34,6 +34,9 @@ def checkRunningJobState(p_scheduler, global_time):
 			p_scheduler.running.remaining_time = 0
 			if p_scheduler.running.curr_cpu_burst == p_scheduler.running.num_bursts-1:
 				p_scheduler.running.finished = True
+				r_q = p_scheduler.returnPrintableReadyQueue()
+				output = event.Event("terminated", global_time, p_scheduler.running, r_q, None)
+				p_scheduler.addEvent(output)
 			else:
 				p_scheduler.running.curr_cpu_burst += 1
 				r_q = p_scheduler.returnPrintableReadyQueue()
@@ -51,9 +54,6 @@ def runJob(p_scheduler, global_time):
 			if current_process.remaining_time == -1 or current_process.remaining_time == 0:
 				current_process.remaining_time = current_process.cpu_burst_times[current_process.curr_cpu_burst]
 			p_scheduler.running = current_process
-			r_q = p_scheduler.returnPrintableReadyQueue()
-			output = event.Event("cpu_start", global_time, p_scheduler.running, r_q, None)
-			p_scheduler.addEvent(output)
 			return 0
 		return -1
 	else:
@@ -90,7 +90,7 @@ def requeueBlocking(p_scheduler, jobs, global_time, alpha):
 	if len(jobs) > 0:
 		for p in jobs:
 			#print("this ran 1")
-			c_burst = p.cpu_burst_times[p.curr_cpu_burst]
+			c_burst = p.cpu_burst_times[p.curr_cpu_burst-1]
 			c_tau = p.tau
 			next_tau = tau_calc(p_scheduler, p, global_time, c_tau, c_burst, alpha)
 			p.tau = next_tau
@@ -124,6 +124,7 @@ def runSJF(processes, num_processes, context_switch_time, l, alpha):
 	p_scheduler = scheduler.Scheduler(processes);
 	r_q = p_scheduler.returnPrintableReadyQueue()
 	print("time %dms: Simulator started for SJF %s"%(global_time, r_q))
+	in_context_switch = False
 
 	while jobs_completed < num_processes:
 
@@ -146,9 +147,13 @@ def runSJF(processes, num_processes, context_switch_time, l, alpha):
 
 		if run_job_rc == 0:
 			p_scheduler.logger[p_scheduler.running.pid].num_context_switches += 1
-			print(global_time)
+			#print(global_time)
 			global_time = runContextSwitch(p_scheduler, global_time, context_switch_time, l, alpha)
-			print(global_time)
+			r_q = p_scheduler.returnPrintableReadyQueue()
+			output = event.Event("cpu_start", global_time, p_scheduler.running, r_q, None)
+			p_scheduler.addEvent(output)
+			in_context_switch = True
+			#print(global_time)
 
 		#print("here3")
 		running_state = checkRunningJobState(p_scheduler, global_time)
@@ -160,16 +165,21 @@ def runSJF(processes, num_processes, context_switch_time, l, alpha):
 				logTimes(p_scheduler)
 				p_scheduler.running = None
 				global_time = runContextSwitch(p_scheduler, global_time, context_switch_time, l, alpha)
+				in_context_switch = True
 			else:
 				moveRunningToBlocking(p_scheduler, global_time)
 				global_time = runContextSwitch(p_scheduler, global_time, context_switch_time, l, alpha)
+				in_context_switch = True
 
 		#print("here7")
 		tickWaitTime(p_scheduler)
 
 		#print(p_scheduler.logger[0].wait_time)
 		#print(p_scheduler.ready_queue.queue)
-		global_time += 1
+		if not in_context_switch:
+			global_time += 1
+		else:
+			in_context_switch = False
 		#print("========================================================")
 	logs = p_scheduler.logger
 	#print(logs)
@@ -177,6 +187,8 @@ def runSJF(processes, num_processes, context_switch_time, l, alpha):
 	total_wait_time = 0
 	total_switches = 0
 	p_scheduler.printEvents()
+	r_q = p_scheduler.returnPrintableReadyQueue()
+	print("time %d: Simulator ended for SJF %s" % (global_time, r_q))
 	#for i in range(num_processes):
 	#	total_cpu_time += logs[i].cpu_time
 	#	total_wait_time += logs[i].wait_time
