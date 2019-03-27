@@ -81,7 +81,9 @@ def runRR(processes, num_processes, context_switch_time, rr_time_slice, rr_queue
         # print("After readyJobs: ")
         # print(p_scheduler)
         if not in_context_switch:
+            # print("WHYYY")
             if first_job:
+                print("Here")
                 in_context_switch = True
                 first_job = False
             else:
