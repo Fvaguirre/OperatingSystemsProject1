@@ -111,6 +111,7 @@ def runContextSwitch(p_scheduler, global_time, context_switch_time, lam, alpha):
 		global_time += 1
 		tickWaitTime(p_scheduler)
 		c_s_time += 1
+		#print(global_time)
 	return global_time
 
 def logTimes(p_scheduler):
@@ -145,7 +146,9 @@ def runSJF(processes, num_processes, context_switch_time, l, alpha):
 
 		if run_job_rc == 0:
 			p_scheduler.logger[p_scheduler.running.pid].num_context_switches += 1
+			print(global_time)
 			global_time = runContextSwitch(p_scheduler, global_time, context_switch_time, l, alpha)
+			print(global_time)
 
 		#print("here3")
 		running_state = checkRunningJobState(p_scheduler, global_time)
@@ -156,6 +159,7 @@ def runSJF(processes, num_processes, context_switch_time, l, alpha):
 				jobs_completed += 1
 				logTimes(p_scheduler)
 				p_scheduler.running = None
+				global_time = runContextSwitch(p_scheduler, global_time, context_switch_time, l, alpha)
 			else:
 				moveRunningToBlocking(p_scheduler, global_time)
 				global_time = runContextSwitch(p_scheduler, global_time, context_switch_time, l, alpha)
