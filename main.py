@@ -2,6 +2,7 @@ import sys
 # import math
 import fcfs
 import rr
+import sjf
 
 import common
 import scheduler
@@ -109,4 +110,5 @@ if __name__ == '__main__':
     print("Time slice: %d" % rr_time_slice)
     print("Context Switch Time %d" % context_switch_time)
     print()
-    rr.runRR(processes, num_processes, context_switch_time, rr_time_slice, rr_queue_type)
+    #rr.runRR(processes, num_processes, context_switch_time, rr_time_slice, rr_queue_type)
+    sjf.runSJF(processes, num_processes, context_switch_time, l, alpha)
