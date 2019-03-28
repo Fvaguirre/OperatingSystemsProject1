@@ -232,7 +232,6 @@ def checkIO(proc, alpha, p_scheduler, global_time, context_switch_time, l, time_
 			#no preemption
 			print("time %dms: Process %c (tau %dms) completed I/O; added to ready queue [Q %s]" %(global_time, proc.pid, proc.tau, r_q))
 			p_scheduler.logger[proc.pid].wait_time -= 1
-			print( "     remove waitime")
 			if flagged:
 				global_time -= 1
 		else:
@@ -240,7 +239,6 @@ def checkIO(proc, alpha, p_scheduler, global_time, context_switch_time, l, time_
 			print("time %dms: Process %c (tau %dms) completed I/O and will preempt %c [Q %s]" %(global_time, proc.pid, proc.tau, p_scheduler.running.pid, r_q))
 			p_scheduler.logger[p_scheduler.running.pid].num_premptions += 1
 			p_scheduler.logger[proc.pid].wait_time -= 1
-			print("    remove waitime")
 			p_scheduler.running.remaining_time += 1
 			p_scheduler.ready_queue.put((p_scheduler.running.tau, p_scheduler.running.pid, p_scheduler.running))
 			preempt = 1
@@ -362,5 +360,6 @@ def runSRT(processes, num_processes, context_switch_time, alpha, l):
 			print("time %dms: Simulator ended for SRT [Q %s]" %(global_time, r_q))
 			avg_cpu_burst_time = (cpu_sum/num_bursts)
 			final_arr = getValues(p_scheduler, context_switch_time, avg_cpu_burst_time)
+			return final_arr
 			break
-	return final_arr
+	
