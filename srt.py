@@ -217,7 +217,7 @@ def decrementRunning(p_scheduler, global_time, alpha, context_switch_time, l):
 				p_scheduler.running.tau = math.ceil((alpha * p_scheduler.running.cpu_burst_times[p_scheduler.running.curr_cpu_burst-1]) + ((1-alpha) * p_scheduler.running.tau))
 				r_q = p_scheduler.returnPrintableReadyQueue()
 				print("time %dms: Recalculated tau = %dms for process %c [Q %s]" %(global_time, p_scheduler.running.tau, p_scheduler.running.pid, r_q))
-				print("time %dms: Process %c switching out of CPU; will block on I/O unitl time %dms [Q %s]" %(global_time, p_scheduler.running.pid, (p_scheduler.running.io_burst_times[p_scheduler.running.curr_io_burst] + global_time + .5*context_switch_time), r_q))
+				print("time %dms: Process %c switching out of CPU; will block on I/O until time %dms [Q %s]" %(global_time, p_scheduler.running.pid, (p_scheduler.running.io_burst_times[p_scheduler.running.curr_io_burst] + global_time + .5*context_switch_time), r_q))
 				p_scheduler.running.time_finished = (p_scheduler.running.io_burst_times[p_scheduler.running.curr_io_burst] + global_time + .5*context_switch_time)
 				run_proc = p_scheduler.running
 				global_time, if_switched = runContextSwitch(p_scheduler, global_time, context_switch_time, alpha, l)
