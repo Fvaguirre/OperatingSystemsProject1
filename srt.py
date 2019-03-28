@@ -361,6 +361,6 @@ def runSRT(processes, num_processes, context_switch_time, alpha, l):
 			r_q = p_scheduler.returnPrintableReadyQueue()
 			print("time %dms: Simulator ended for SRT [Q %s]" %(global_time, r_q))
 			avg_cpu_burst_time = (cpu_sum/num_bursts)
-			final_arr = getValues(p_scheduler, context_switch_time, avg_cpu_burst_time))
+			final_arr = getValues(p_scheduler, context_switch_time, avg_cpu_burst_time)
 			break
 	return final_arr
